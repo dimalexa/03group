@@ -102,15 +102,68 @@ const UpcomingEvents = () => {
     scheduleUpdate();
     });
 
+  const top50 = events.filter(x => x.result.days < 50);
+  const left = events.filter(x => x.result.days >= 50);
+
   return (
     <div style={{ fontFamily: 'Open Sans', padding: '1rem' }}>
-      <h2>📅 Ближайшие события 03 группы</h2>
-      {events.length === 0 ? (
+      <h2>📅 Ближайшие события 03 группы - следующие 50 дней</h2>
+      {top50.length === 0 ? (
         <p>Нет предстоящих событий</p>
       ) : (
         <ul style={{ listStyle: 'none', padding: 0 }}>
-          {events.map((event, index) => {
-            const progressPercent = event.result.days / event.sliderlength * 100;
+          {top50.map((event, index) => {
+            const progressPercent = event.result.days / 50 * 100;
+            const IsContinius = event.result.lag;
+
+            return (
+              <li key={index} style={{ margin: '1rem 0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem'}}>
+                  {/* Название и дни */}
+                  <div style={{ width: '200px', maxWidth: '35vw', display: 'flex', alignContent: 'flex-start', flexDirection: 'column'}}>
+                    <strong>{event.name}</strong>
+                    <span style={{ marginLeft: '0.5rem', color: '#555' }}>
+                      {IsContinius ? `Идёт в настоящий момент. До окончания ${event.result.days} дн.` : ''}
+                    </span>
+                    <span style={{ marginLeft: '0.5rem', color: '#555'}}>
+                      {(event.days === 0 && !IsContinius)? '🎉 сегодня' : `${event.result.days} дн.`}
+                    </span>
+                  </div>
+                  <div style={{
+                    width: '60vw',
+                    height: '15px',
+                    borderRadius: '10px',
+                    overflow: 'hidden'
+                  }}>
+                    <div style={{
+                      width: `${progressPercent}%`,
+                      height: '100%',
+                      borderRadius: '10px',
+                      backgroundColor: `${event.color}`,
+                      transition: 'width 0.3s ease',
+                      backgroundImage: `url(${event.image})`,
+                      backgroundSize: '15px 15px',
+                      backgroundRepeat: 'repeat'
+                    }} />
+                  </div>
+                
+                  
+                  </div>
+
+                  {/* Прогресс-бар */}
+                  
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      <h2>📅 Остальные события</h2>
+      {left.length === 0 ? (
+        <p>Нет предстоящих событий</p>
+      ) : (
+        <ul style={{ listStyle: 'none', padding: 0 }}>
+          {left.map((event, index) => {
+            const progressPercent = event.result.days / 365 * 100;
             const IsContinius = event.result.lag;
 
             return (
