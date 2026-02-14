@@ -117,7 +117,7 @@ const UpcomingEvents = () => {
               <li key={index} style={{ margin: '1rem 0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem'}}>
                   {/* Название и дни */}
-                  <div style={{ maxWidth: '40vw', display: 'flex', alignContent: 'flex-start', flexDirection: 'column'}}>
+                  <div style={{ width: '20vw', maxWidth: '40vw', display: 'flex', alignContent: 'flex-start', flexDirection: 'column'}}>
                     <strong>{event.name}</strong>
                     <span style={{ marginLeft: '0.5rem', color: '#555' }}>
                       {IsContinius ? `Идёт в настоящий момент. До окончания ${event.result.days} дн.` : ''}
