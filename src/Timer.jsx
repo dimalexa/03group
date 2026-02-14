@@ -3,7 +3,7 @@ import { Dates } from './dates';
 import './Main.css';
 
 
-const getDaysUntil = (dateStr, type) => {
+const getDaysUntil = (dateStr, type, enddateStr) => {
   const today = new Date();
   // нормализуем текущую дату к началу дня в UTC
   const todayUTC = Date.UTC(
@@ -16,14 +16,27 @@ const getDaysUntil = (dateStr, type) => {
   const eventDate = new Date(dateStr + 'T00:00:00Z');
   if (isNaN(eventDate)) return null; // неверный формат
 
+  const eventEndDate = new Date(enddateStr + 'T00:00:00Z');
+  if (isNaN(eventEndDate)) return null;
+
   if (type === 'once') {
+    const eventEndUTC = Date.UTC(
+      eventEndDate.getUTCFullYear(),
+      eventEndDate.getUTCMonth(),
+      eventEndDate.getUTCDate()
+    );
     const eventUTC = Date.UTC(
       eventDate.getUTCFullYear(),
       eventDate.getUTCMonth(),
       eventDate.getUTCDate()
     );
-    if (eventUTC < todayUTC) return null; // уже прошло
-    return Math.floor((eventUTC - todayUTC) / (1000 * 60 * 60 * 24));
+    const result = {days: Math.floor((eventUTC - todayUTC) / (1000 * 60 * 60 * 24)), 
+      lag: Math.floor((eventEndUTC - eventUTC) / (1000 * 60 * 60 * 24))}
+    if (eventEndUTC < todayUTC) return null;
+    if (eventDate > todayUTC) {
+      result.lag = 0;
+    }
+    return result;
   }
 
   if (type === 'recurring') {
@@ -42,7 +55,8 @@ const getDaysUntil = (dateStr, type) => {
     // защита от 29 февраля в невисокосном году: JS автоматически сделает 1 марта,
     // поэтому результат останется корректным (ближайшая реальная дата)
     const diff = Math.floor((nextEventUTC - todayUTC) / (1000 * 60 * 60 * 24));
-    return diff >= 0 ? diff : 0;
+    const result = {days: diff >= 0 ? diff : 0, lag: 0}
+    return result;
   }
 
   return null; // неизвестный тип
@@ -51,34 +65,17 @@ const getDaysUntil = (dateStr, type) => {
 
 const UpcomingEvents = () => {
     const [events, setEvents] = useState([]);
-    const [maxDays, setMaxDays] = useState(0);
-  // вычисляем события с днями, отсеиваем прошедшие once
-  const eventsWithDays = Object.entries(Dates)
-    .map(([name, { date, type }]) => {
-      const days = getDaysUntil(date, type);
-      return days !== null ? { name, days } : null;
-    })
-    .filter(Boolean);
-
-  // находим максимум дней среди топ-5 для шкалы прогресса
 
   const recalcEvents = () => {
     const eventsWithDays = Object.entries(Dates)
-      .map(([name, { date, type, sliderlength }]) => {
-        const days = getDaysUntil(date, type);
-        return days !== null ? { name, days, sliderlength } : null;
+      .map(([name, { date, type, sliderlength, enddate, color, image }]) => {
+        const result = getDaysUntil(date, type, enddate);
+        return result !== null ? { name, result, sliderlength, enddate, color, image} : null;
       })
       .filter(Boolean)
-      .sort((a, b) => a.days - b.days);
+      .sort((a, b) => a.result.days - b.result.days);
 
-      setEvents(eventsWithDays);
-    console.log('recalevents');
-    if (eventsWithDays.length > 0) {
-      setMaxDays(Math.max(...eventsWithDays.map(e => e.days)));
-    } else {
-      setMaxDays(0);
-    }
-    };
+      setEvents(eventsWithDays);}
 
   useEffect(() => {
     recalcEvents();
@@ -102,9 +99,6 @@ const UpcomingEvents = () => {
 
         return () => clearTimeout(timeoutId);
     };
-
-    console.log('useffect');
-
     scheduleUpdate();
     });
 
@@ -116,8 +110,8 @@ const UpcomingEvents = () => {
       ) : (
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {events.map((event, index) => {
-            // доля заполнения (0% — максимум дней, 100% — 0 дней)
-            const progressPercent = event.days
+            const progressPercent = event.result.days;
+            const IsContinius = event.result.lag;
 
             return (
               <li key={index} style={{ margin: '1rem 0' }}>
@@ -126,12 +120,15 @@ const UpcomingEvents = () => {
                   <div style={{ minWidth: '150px', width: '20vw', display: 'flex', alignContent: 'flex-start', flexDirection: 'column'}}>
                     <strong>{event.name}</strong>
                     <span style={{ marginLeft: '0.5rem', color: '#555' }}>
-                      {event.days === 0 ? '🎉 сегодня' : `${event.days} дн.`}
+                      {IsContinius ? `Идёт в настоящий момент. До окончания ${event.result.days} дн.` : ''}
+                    </span>
+                    <span style={{ marginLeft: '0.5rem', color: '#555'}}>
+                      {(event.days === 0 && !IsContinius)? '🎉 сегодня' : `${event.result.days} дн.`}
                     </span>
                   </div>
                   <div style={{
                     width: '50vw',
-                    height: '20px',
+                    height: '30px',
                     borderRadius: '10px',
                     overflow: 'hidden'
                   }}>
@@ -139,8 +136,11 @@ const UpcomingEvents = () => {
                       width: `${progressPercent}%`,
                       height: '100%',
                       borderRadius: '10px',
-                      backgroundColor: event.days < 7 ? '#6495ED' : '#87CEFA', // красный, если меньше недели
-                      transition: 'width 0.3s ease'
+                      backgroundColor: `${event.color}`,
+                      transition: 'width 0.3s ease',
+                      backgroundImage: `url(${event.image})`,
+                      backgroundSize: '30px 30px',
+                      backgroundRepeat: 'repeat'
                     }} />
                   </div>
                 
