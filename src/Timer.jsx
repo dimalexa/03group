@@ -128,7 +128,7 @@ const UpcomingEvents = () => {
                   </div>
                   <div style={{
                     width: '60vw',
-                    height: '2vw',
+                    height: '15px',
                     borderRadius: '10px',
                     overflow: 'hidden'
                   }}>
@@ -139,7 +139,7 @@ const UpcomingEvents = () => {
                       backgroundColor: `${event.color}`,
                       transition: 'width 0.3s ease',
                       backgroundImage: `url(${event.image})`,
-                      backgroundSize: '2vw 2vw',
+                      backgroundSize: '15px 15px',
                       backgroundRepeat: 'repeat'
                     }} />
                   </div>
