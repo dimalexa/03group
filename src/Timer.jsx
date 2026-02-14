@@ -117,10 +117,10 @@ const UpcomingEvents = () => {
             const IsContinius = event.result.lag;
 
             return (
-              <li key={index} style={{ margin: '1rem 0' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem'}}>
+              <li key={index} style={{ margin: '1vw 0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '2vw'}}>
                   {/* Название и дни */}
-                  <div style={{ width: '200px', maxWidth: '35vw', display: 'flex', alignContent: 'flex-start', flexDirection: 'column'}}>
+                  <div style={{ width: '200px', maxWidth: '30vw', display: 'flex', alignContent: 'flex-start', flexDirection: 'column'}}>
                     <strong>{event.name}</strong>
                     <span style={{ marginLeft: '0.5rem', color: '#555' }}>
                       {IsContinius ? `Идёт в настоящий момент. До окончания ${event.result.days} дн.` : ''}
@@ -167,10 +167,10 @@ const UpcomingEvents = () => {
             const IsContinius = event.result.lag;
 
             return (
-              <li key={index} style={{ margin: '1rem 0' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem'}}>
+              <li key={index} style={{ margin: '1vw 0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '2vw'}}>
                   {/* Название и дни */}
-                  <div style={{ width: '200px', maxWidth: '35vw', display: 'flex', alignContent: 'flex-start', flexDirection: 'column'}}>
+                  <div style={{ width: '200px', maxWidth: '30vw', display: 'flex', alignContent: 'flex-start', flexDirection: 'column'}}>
                     <strong>{event.name}</strong>
                     <span style={{ marginLeft: '0.5rem', color: '#555' }}>
                       {IsContinius ? `Идёт в настоящий момент. До окончания ${event.result.days} дн.` : ''}
