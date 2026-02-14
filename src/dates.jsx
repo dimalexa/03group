@@ -1,7 +1,7 @@
 import happy from './data/images/happy.png';
 import newyear from './data/images/newyear.png';
 import birthday from './data/images/happybirthday.png';
-import study from './data/images/study.png';
+import study from './data/images/graduate.png';
 import celebration from './data/images/celebration.png';
 
 
