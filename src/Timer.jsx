@@ -110,7 +110,7 @@ const UpcomingEvents = () => {
       ) : (
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {events.map((event, index) => {
-            const progressPercent = event.result.days;
+            const progressPercent = event.result.days / event.sliderlength * 100;
             const IsContinius = event.result.lag;
 
             return (
